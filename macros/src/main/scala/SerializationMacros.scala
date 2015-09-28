@@ -3,7 +3,7 @@ package macros
 import scala.annotation.StaticAnnotation
 import scala.collection.immutable.TreeSet
 import scala.language.experimental.macros
-import scala.reflect.macros.{ Context, whitebox }
+import scala.reflect.macros.{Universe, Context, whitebox}
 //import scala.language.experimental.macros
 
 trait Method {
@@ -32,13 +32,23 @@ object SerializationMacros {
   def impl1[A: c.WeakTypeTag](c: whitebox.Context): c.Expr[Inner] = {
     import c.universe._
 
-    val symbol: String = weakTypeOf[A].typeSymbol.asClass.toString
+    val clazz = weakTypeOf[A].typeSymbol.asClass
+
+//    val info: List[List[c.universe.Symbol]] = clazz.primaryConstructor.typeSignature.paramLists
+    val info: List[List[c.universe.Type]] = clazz.primaryConstructor.typeSignature.paramLists.map(x => x.map(x => x.typeSignature))
+    val qq = info.toString
+
+//    val symbol: String = weakTypeOf[A].typeSymbol.asClass.toString
+//    val symbol: String = weakTypeOf[A].typeSymbol.asClass.toString
+//    val symbol: String = weakTypeOf[A].decls.toString
+//    val symbol: String = weakTypeOf[A].members.toString
+    val symbol: String = weakTypeOf[A].paramLists.toString
 
 
     c.Expr[Inner] {
       q"""
       class test1 extends macros.Inner {
-        def method:String = "s"
+        def method:String = $qq
       }
       new test1 {}
         """
