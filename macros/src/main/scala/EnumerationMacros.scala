@@ -34,7 +34,7 @@ object EnumerationMacros {
         Apply(
           Select(
             reify(TreeSet).tree,
-            newTermName("apply")
+            TermName("apply")
           ),
           children.map(sourceModuleRef(_))
         )
